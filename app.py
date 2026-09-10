@@ -1,7 +1,8 @@
+
 import streamlit as st
 import os
 from gtts import gTTS
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 from moviepy.editor import VideoFileClip, AudioFileClip
 
 st.set_page_config(page_title="App Dịch & Lồng Tiếng Phim", page_icon="🎬", layout="centered")
@@ -13,7 +14,7 @@ uploaded_file = st.file_uploader("Chọn tệp video (MP4, AVI, MOV)...", type=[
 
 target_lang = st.selectbox(
     "Chọn ngôn ngữ muốn lồng tiếng:",
-    options=[("Tiếng Việt", "vi"), ("Tiếng Anh", "en"), ("Tiếng Trung", "zh-cn"), ("Tiếng Nhật", "ja"), ("Tiếng Hàn", "ko")],
+    options=[("Tiếng Việt", "vi"), ("Tiếng Anh", "en"), ("Tiếng Trung", "zh-CN"), ("Tiếng Nhật", "ja"), ("Tiếng Hàn", "ko")],
     format_func=lambda x: x[0]
 )[1]
 
@@ -27,20 +28,18 @@ if st.button("🚀 Bắt đầu lồng tiếng"):
                 with open("input_video.mp4", "wb") as f:
                     f.write(uploaded_file.read())
 
-                # Dịch văn bản
-                translator = Translator()
-                translated = translator.translate(text_input, dest=target_lang)
-                st.info(f"Văn bản đã dịch: {translated.text}")
+                # Dịch văn bản dùng deep-translator
+                translated_text = GoogleTranslator(source='auto', target=target_lang).translate(text_input)
+                st.info(f"Văn bản đã dịch: {translated_text}")
 
-                # Tạo âm thanh lồng tiếng
-                tts = gTTS(text=translated.text, lang=target_lang)
+                # Tạo âm thanh lồng tiếng từ gTTS
+                tts = gTTS(text=translated_text, lang=target_lang.lower())
                 tts.save("voice.mp3")
 
                 # Ghép âm thanh vào video
                 video = VideoFileClip("input_video.mp4")
                 audio = AudioFileClip("voice.mp3")
 
-                # Điều chỉnh độ dài âm thanh theo video
                 final_video = video.set_audio(audio)
                 output_path = "output_video.mp4"
                 final_video.write_videofile(output_path, codec="libx264", audio_codec="aac")
