@@ -4,3 +4,4 @@ torch
 ffmpeg-python
 pydub
 edge-tts
+audioop-lts
