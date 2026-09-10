@@ -2,3 +2,5 @@ streamlit
 openai-whisper
 torch
 ffmpeg-python
+pydub
+edge-tts
