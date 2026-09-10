@@ -1,0 +1,6 @@
+streamlit
+googletrans==3.1.0a0
+gTTS
+SpeechRecognition
+moviepy
+imageio-ffmpeg
